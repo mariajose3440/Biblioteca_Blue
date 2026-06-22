@@ -317,7 +317,7 @@
           <mxGeometry height="630" width="1190" x="-1770" y="10" as="geometry" />
         </mxCell>
         <mxCell id="R9wzEOjzqvdha6iYNmyP-19" parent="1" style="swimlane;whiteSpace=wrap;html=1;" value="Biblioteca_Blue" vertex="1">
-          <mxGeometry height="250" width="890" x="-2730" y="10" as="geometry">
+          <mxGeometry height="780" width="2230" x="-2730" y="-30" as="geometry">
             <mxRectangle height="30" width="120" x="-1720" y="950" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
