@@ -1,10 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Blue - Registrar préstamo</title>
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; background:#f4f6fb; margin:0; padding:40px; }
+        .card { max-width:680px; margin:0 auto; background:#fff; padding:32px;
+                border-radius:12px; box-shadow:0 4px 18px rgba(0,0,0,.08); }
+        h1 { color:#1b3a8a; font-size:22px; margin-top:0; }
+        label { display:block; margin:16px 0 6px; font-weight:bold; color:#333; font-size:14px; }
+        select, input { width:100%; padding:10px; border:1px solid #ccd2e0;
+                        border-radius:6px; font-size:14px; box-sizing:border-box; }
+        button { margin-top:24px; width:100%; padding:12px; background:#1b3a8a; color:#fff;
+                 border:none; border-radius:6px; font-size:15px; cursor:pointer; }
+        button:hover { background:#142a66; }
+        .msg { padding:12px; border-radius:6px; margin-bottom:16px; font-size:14px; }
+        .ok  { background:#e3f7e8; color:#1d7a3a; border:1px solid #b6e6c4; }
+        .err { background:#fde7e7; color:#b32424; border:1px solid #f3c0c0; }
+        h2 { color:#1b3a8a; font-size:17px; margin:8px 0 12px; }
+        .libros { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+                  gap:12px; margin-bottom:8px; }
+        .libro { background:#f4f6fb; border:1px solid #dbe2f0; border-radius:8px; padding:12px; }
+        .libro .titulo { font-weight:bold; color:#1b3a8a; font-size:14px; margin-bottom:4px; }
+        .libro .autor { color:#444; font-size:13px; margin-bottom:6px; }
+        .libro .meta { color:#666; font-size:12px; line-height:1.5; }
+        .libro .desc { color:#777; font-size:12px; font-style:italic; margin-top:6px; }
+        .libro .ejid { display:inline-block; background:#1b3a8a; color:#fff; font-size:11px;
+                       padding:1px 7px; border-radius:10px; margin-bottom:6px; }
+        .vacio { color:#888; font-size:14px; font-style:italic; }
+        hr { border:none; border-top:1px solid #e6e9f2; margin:24px 0; }
+        table.prestamos { width:100%; border-collapse:collapse; font-size:13px; }
+        table.prestamos th, table.prestamos td { padding:8px 10px; text-align:left;
+                       border-bottom:1px solid #e6e9f2; }
+        table.prestamos th { color:#1b3a8a; font-size:12px; text-transform:uppercase; }
+        table.prestamos tr:last-child td { border-bottom:none; }
+    </style>
 </head>
 <body>
+    <div class="card">
+        <h1>Registrar préstamo</h1>
 
+        {% if mensaje %}<div class="msg ok">{{ mensaje }}</div>{% endif %}
+        {% if error %}<div class="msg err">Error: {{ error }}</div>{% endif %}
+
+        <h2>Libros disponibles</h2>
+        {% if libros %}
+            <div class="libros">
+                {% for libro in libros %}
+                    <div class="libro">
+                        <span class="ejid">{{ libro.cantidad_ejemplares }} ejemplar{{ libro.cantidad_ejemplares|pluralize:"es" }}</span>
+                        <div class="titulo">{{ libro.titulo|default:"Sin título" }}</div>
+                        <div class="autor">{{ libro.autor }}{% if libro.anio %} · {{ libro.anio }}{% endif %}</div>
+                        <div class="meta">
+                            {% if libro.editorial %}{{ libro.editorial }}<br>{% endif %}
+                            ISBN: {{ libro.isbn }}
+                        </div>
+                        {% if libro.descripcion %}<div class="desc">{{ libro.descripcion }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="vacio">No se pudieron cargar los libros del web service.</p>
+        {% endif %}
+
+        <hr>
+
+        <form method="post" action="">
+            {% csrf_token %}
+
+            <label for="lector_id">Lector</label>
+            <select name="lector_id" id="lector_id" required>
+                <option value="">-- Seleccione un lector --</option>
+                {% for lector in lectores %}
+                    <option value="{{ lector.id }}">
+                        {{ lector.nombres }} ({{ lector.cedula }})
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="id_ejemplar">Ejemplar</label>
+            <select name="id_ejemplar" id="id_ejemplar" required>
+                <option value="">-- Seleccione un ejemplar --</option>
+                {% for ejemplar in ejemplares %}
+                    <option value="{{ ejemplar.id_ejemplar }}">
+                        #{{ ejemplar.id_ejemplar }} · {{ ejemplar.titulo }} (ISBN: {{ ejemplar.isbn }})
+                    </option>
+                {% endfor %}
+            </select>
+
+            <label for="fecha_prestamo">Fecha de préstamo</label>
+            <input type="date" name="fecha_prestamo" id="fecha_prestamo" required>
+
+            <label for="fecha_estimada">Fecha estimada de devolución</label>
+            <input type="date" name="fecha_estimada" id="fecha_estimada">
+
+            <button type="submit">Guardar préstamo</button>
+        </form>
+
+        <hr>
+
+        <h2>Préstamos realizados</h2>
+        {% if prestamos %}
+            <table class="prestamos">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Lector</th>
+                        <th>Ejemplar</th>
+                        <th>Fecha préstamo</th>
+                        <th>Fecha estimada</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prestamo in prestamos %}
+                        <tr>
+                            <td>{{ prestamo.id_prestamo }}</td>
+                            <td>{{ prestamo.lector }}</td>
+                            <td>
+                                #{{ prestamo.id_ejemplar }}
+                                {% if prestamo.titulo %} · {{ prestamo.titulo }}{% endif %}
+                            </td>
+                            <td>{{ prestamo.fecha_prestamo }}</td>
+                            <td>{{ prestamo.fecha_estimada|default:"—" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="vacio">No hay préstamos registrados todavía.</p>
+        {% endif %}
+    </div>
 </body>
 </html>

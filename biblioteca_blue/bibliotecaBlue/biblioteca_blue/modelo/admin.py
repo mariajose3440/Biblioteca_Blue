@@ -21,4 +21,4 @@ class PrestamoAdmin(admin.ModelAdmin):
 
     # Búsqueda (puedes buscar por el ID del ejemplar o datos del lector relacionado)
     search_fields = ('id_ejemplar', 'lector__cedula', 'lector__nombres')
-# Register your models here.
+
