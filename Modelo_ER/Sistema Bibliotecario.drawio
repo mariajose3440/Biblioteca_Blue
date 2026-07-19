@@ -274,7 +274,7 @@
         <mxCell id="R9wzEOjzqvdha6iYNmyP-5" parent="R9wzEOjzqvdha6iYNmyP-13" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;container=0;" value="Prestamo" vertex="1">
           <mxGeometry height="60" width="120" y="20" as="geometry" />
         </mxCell>
-        <mxCell id="R9wzEOjzqvdha6iYNmyP-6" parent="R9wzEOjzqvdha6iYNmyP-13" style="ellipse;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;container=0;" value="&lt;u&gt;ISBN_libro&lt;/u&gt;" vertex="1">
+        <mxCell id="R9wzEOjzqvdha6iYNmyP-6" parent="R9wzEOjzqvdha6iYNmyP-13" style="ellipse;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;container=0;" value="&lt;u&gt;ID_EJEMPLAR&lt;/u&gt;" vertex="1">
           <mxGeometry height="40" width="85" x="212.5" as="geometry" />
         </mxCell>
         <mxCell id="R9wzEOjzqvdha6iYNmyP-7" parent="R9wzEOjzqvdha6iYNmyP-13" style="ellipse;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;container=0;" value="Fecha_prestamo" vertex="1">
@@ -321,11 +321,20 @@
             <mxRectangle height="30" width="120" x="-1720" y="950" as="alternateBounds" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="R9wzEOjzqvdha6iYNmyP-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 40px;&quot;&gt;SQL&lt;/font&gt;" vertex="1">
+        <mxCell id="8rTZrBC5ud2TAPk6ifZp-1" parent="R9wzEOjzqvdha6iYNmyP-19" style="ellipse;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=#FAE5C7;strokeColor=#0F8B8D;fontColor=#143642;container=0;" value="fecha_devolución" vertex="1">
+          <mxGeometry height="30" width="110" x="651.5" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="R9wzEOjzqvdha6iYNmyP-20" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;MongoDB&lt;/font&gt;" vertex="1">
           <mxGeometry height="30" width="60" x="-2350" y="295" as="geometry" />
         </mxCell>
         <mxCell id="R9wzEOjzqvdha6iYNmyP-21" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 40px;&quot;&gt;PostgreSQL:&amp;nbsp;&lt;/font&gt;" vertex="1">
           <mxGeometry height="60" width="300" x="-1335" y="680" as="geometry" />
+        </mxCell>
+        <mxCell id="8rTZrBC5ud2TAPk6ifZp-2" edge="1" parent="1" source="R9wzEOjzqvdha6iYNmyP-5" style="endArrow=none;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.75;exitY=0;exitDx=0;exitDy=0;labelBackgroundColor=none;strokeColor=#A8201A;fontColor=default;" target="8rTZrBC5ud2TAPk6ifZp-1" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="-2166" y="-10" as="sourcePoint" />
+            <mxPoint x="-2111" y="-440" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>
