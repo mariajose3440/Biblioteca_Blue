@@ -1,7 +1,9 @@
 # Biblioteca Blue
 
 Anteriormente fue:Proyecto final de la Segunda Unidad de Base de Datos hasta el commit del 24 de junio del 2026 xd.
+
 Ahora es: Proyecto FInal de la Tercera Unidad :D
+
 Sistema de gestión bibliotecaria compuesto por tres proyectos independientes que se comunican entre sí vía API REST.
 
 - **WebApplication**: gestiona lectores y préstamos. Patrón MVC, se conecta al WebService vía API para obtener el catálogo de libros/ejemplares.
