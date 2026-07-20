@@ -56,3 +56,4 @@ docker-compose.override.yml
 mongo-keyfile
 
 datos/
+lib64/
