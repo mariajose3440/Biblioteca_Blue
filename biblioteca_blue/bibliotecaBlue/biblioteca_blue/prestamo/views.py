@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from modelo.models import Lector, Prestamo
+from django.http import JsonResponse
 import requests
 
 def guardar(request):
@@ -100,3 +101,33 @@ def marcar_devuelto(request, prestamo_id):
         except Prestamo.DoesNotExist:
             pass
     return redirect('guardar_prestamo')
+
+def api_lectores(request):
+    lectores = Lector.objects.all()
+    data = [
+        {
+            'id': str(l.id),
+            'cedula': l.cedula,
+            'nombres': l.nombres,
+            'correo_electronico': l.correo_electronico,
+        }
+        for l in lectores
+    ]
+    return JsonResponse(data, safe=False)
+
+
+def api_prestamos(request):
+    prestamos = Prestamo.objects.all()
+    data = [
+        {
+            'id': str(p.id),
+            'lector': p.lector.nombres,
+            'lector_id': str(p.lector.id),
+            'id_ejemplar': p.id_ejemplar,
+            'fecha_prestamo': p.fecha_prestamo.isoformat() if p.fecha_prestamo else None,
+            'fecha_estimada': p.fecha_estimada.isoformat() if p.fecha_estimada else None,
+            'fecha_devolucion': p.fecha_devolucion.isoformat() if p.fecha_devolucion else None,
+        }
+        for p in prestamos
+    ]
+    return JsonResponse(data, safe=False)
