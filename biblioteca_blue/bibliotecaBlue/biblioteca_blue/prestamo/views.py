@@ -2,14 +2,12 @@ from django.shortcuts import render
 from modelo.models import Lector, Prestamo
 import requests
 
-
 def guardar(request):
     lectores = Lector.objects.all()
 
-    # Obtener ejemplares desde el servicio externo (webserviceLibros)
-    # (se cargan tanto para GET como para POST)
+
     ejemplares = []
-    libros_por_isbn = {}  # agrupa ejemplares por ISBN para mostrar "libros" únicos
+    libros_por_isbn = {}
     try:
         response = requests.get("http://localhost:8001/ws/ejemplares/")
         if response.status_code == 200:
@@ -32,7 +30,6 @@ def guardar(request):
                     'descripcion': libro.get('descripcion', ''),
                 })
 
-                # Agrupar por ISBN: un "libro" único con su cantidad de ejemplares
                 if isbn not in libros_por_isbn:
                     libros_por_isbn[isbn] = {
                         'isbn': isbn,
@@ -49,30 +46,12 @@ def guardar(request):
 
     libros = list(libros_por_isbn.values())
 
-    # Préstamos realizados, con el lector y el título del ejemplar prestado
-    ejemplares_por_id = {ej['id_ejemplar']: ej for ej in ejemplares}
-    prestamos = []
-    for p in Prestamo.objects.select_related('lector').order_by('-fecha_prestamo'):
-        ejemplar_info = ejemplares_por_id.get(int(p.id_ejemplar)) if str(p.id_ejemplar).isdigit() else None
-        prestamos.append({
-            'id_prestamo': p.id_prestamo,
-            'lector': p.lector.nombres,
-            'id_ejemplar': p.id_ejemplar,
-            'titulo': ejemplar_info['titulo'] if ejemplar_info else None,
-            'fecha_prestamo': p.fecha_prestamo,
-            'fecha_estimada': p.fecha_estimada,
-        })
-
-    contexto = {
-        'lectores': lectores,
-        'libros': libros,
-        'ejemplares': ejemplares,
-        'prestamos': prestamos,
-    }
+    # ------------------ PROCESAR POST PRIMERO ------------------
+    mensaje = None
+    error = None
 
     if request.method == 'POST':
         try:
-            # Lector seleccionado en el formulario
             lector = Lector.objects.get(id=request.POST.get('lector_id'))
 
             Prestamo.objects.create(
@@ -81,8 +60,31 @@ def guardar(request):
                 fecha_prestamo=request.POST.get('fecha_prestamo'),
                 fecha_estimada=request.POST.get('fecha_estimada') or None,
             )
-            contexto['mensaje'] = 'Préstamo guardado correctamente.'
+            mensaje = 'Préstamo guardado correctamente.'
         except Exception as e:
-            contexto['error'] = str(e)
+            error = str(e)
+
+    ejemplares_por_id = {ej['id_ejemplar']: ej for ej in ejemplares}
+    prestamos = []
+    for p in Prestamo.objects.order_by('-fecha_prestamo'):
+        ejemplar_info = ejemplares_por_id.get(int(p.id_ejemplar)) if str(p.id_ejemplar).isdigit() else None
+        prestamos.append({
+            'id_prestamo': str(p.id),          # <--- ¡corregido!
+            'lector': p.lector.nombres,
+            'id_ejemplar': p.id_ejemplar,
+            'titulo': ejemplar_info['titulo'] if ejemplar_info else None,
+            'fecha_prestamo': p.fecha_prestamo,
+            'fecha_estimada': p.fecha_estimada,
+            'fecha_devolucion': p.fecha_devolucion,
+        })
+
+    contexto = {
+        'lectores': lectores,
+        'libros': libros,
+        'ejemplares': ejemplares,
+        'prestamos': prestamos,
+        'mensaje': mensaje,
+        'error': error,
+    }
 
     return render(request, 'index.html', contexto)

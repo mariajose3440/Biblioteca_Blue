@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import mongoengine
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -73,17 +74,17 @@ TEMPLATES = [
 WSGI_APPLICATION = 'biblioteca_blue.wsgi.application'
 
 
+mongoengine.connect(
+    db='biblioteca_blue',
+    host='mongodb://localhost:27018,localhost:27019,localhost:27020/biblioteca_blue?replicaSet=rs0'
+)
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'biblioteca_blue',
-        'USER': 'bluebul_bibliotecaBlue',
-        'PASSWORD': 'Bluebul12345',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 

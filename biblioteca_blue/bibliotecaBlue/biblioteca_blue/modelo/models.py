@@ -5,25 +5,27 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-from django.db import models
+import mongoengine as me
 
-class Lector(models.Model):
-    cedula = models.CharField(unique=True, max_length=10)
-    nombres = models.CharField(max_length=50)
-    email = models.CharField(unique=True, max_length=100, blank=True, null=True)
+class Lector(me.Document):
+    cedula = me.StringField(max_length=10, required=True, unique=True)
+    nombres = me.StringField(max_length=50, required=True)
+    email = me.StringField(max_length=100, unique=True, sparse=True)
 
-    class Meta:
-        managed = False
-        db_table = 'lector'
+    meta = {'collection': 'lector'}
+
+    def __str__(self):
+        return self.nombres
 
 
-class Prestamo(models.Model):
-    id_prestamo = models.AutoField(primary_key=True)
-    lector = models.ForeignKey(Lector, models.DO_NOTHING)
-    id_ejemplar = models.CharField(max_length=10)
-    fecha_prestamo = models.DateField()
-    fecha_estimada = models.DateField(blank=True, null=True)
+class Prestamo(me.Document):
+    lector = me.ReferenceField(Lector, required=True)
+    id_ejemplar = me.StringField(max_length=10, required=True)
+    fecha_prestamo = me.DateField(required=True)
+    fecha_estimada = me.DateField()
+    fecha_devolucion = me.DateField()
 
-    class Meta:
-        managed = False
-        db_table = 'prestamo'
+    meta = {'collection': 'prestamo'}
+
+    def __str__(self):
+        return f"Préstamo {self.id} - {self.lector.nombres}"
