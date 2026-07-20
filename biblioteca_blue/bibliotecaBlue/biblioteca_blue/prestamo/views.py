@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from modelo.models import Lector, Prestamo
 import requests
 
@@ -88,3 +88,15 @@ def guardar(request):
     }
 
     return render(request, 'index.html', contexto)
+
+def marcar_devuelto(request, prestamo_id):
+    if request.method == 'POST':
+        try:
+            prestamo = Prestamo.objects.get(id=prestamo_id)
+            fecha = request.POST.get('fecha_devolucion')
+            if fecha:
+                prestamo.fecha_devolucion = fecha
+                prestamo.save()
+        except Prestamo.DoesNotExist:
+            pass
+    return redirect('guardar_prestamo')

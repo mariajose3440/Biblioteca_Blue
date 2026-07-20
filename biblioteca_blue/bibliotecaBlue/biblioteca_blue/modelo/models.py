@@ -10,7 +10,7 @@ import mongoengine as me
 class Lector(me.Document):
     cedula = me.StringField(max_length=10, required=True, unique=True)
     nombres = me.StringField(max_length=50, required=True)
-    email = me.StringField(max_length=100, unique=True, sparse=True)
+    correo_electronico = me.StringField(max_length=100, unique=True, sparse=True)
 
     meta = {'collection': 'lector'}
 

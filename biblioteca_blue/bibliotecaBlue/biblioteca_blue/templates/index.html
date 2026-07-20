@@ -262,7 +262,18 @@
                     </td>
                     <td>{{ prestamo.fecha_prestamo }}</td>
                     <td>{{ prestamo.fecha_estimada|default:"—" }}</td>
-                    <td>{{ prestamo.fecha_devolucion|default:"Pendiente" }}</td>
+                    <td>
+                        {% if prestamo.fecha_devolucion %}
+                        {{ prestamo.fecha_devolucion }}
+                        {% else %}
+                        <form method="post" action="{% url 'marcar_devuelto' prestamo.id_prestamo %}"
+                            style="display:flex; gap:6px;">
+                            {% csrf_token %}
+                            <input type="date" name="fecha_devolucion" required style="padding:4px;">
+                            <button type="submit" style="padding:4px 8px; font-size:12px;">Marcar</button>
+                        </form>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
