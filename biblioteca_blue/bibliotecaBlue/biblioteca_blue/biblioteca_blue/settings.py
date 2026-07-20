@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'biblioteca_blue.wsgi.application'
 
 mongoengine.connect(
     db='biblioteca_blue',
-    host='mongodb://localhost:27018,localhost:27019,localhost:27020/biblioteca_blue?replicaSet=rs0'
+    host='mongodb://bluebul_user:webapp123seguro@localhost:27018,localhost:27019,localhost:27020/biblioteca_blue?replicaSet=rs0&authSource=biblioteca_blue'
 )
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
