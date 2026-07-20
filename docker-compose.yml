@@ -36,6 +36,31 @@ services:
       - ./mongo-keyfile:/etc/mongo-keyfile:ro
     networks:
       - mongo-net
+
+  postgres:
+    image: postgres:16
+    container_name: postgres_webservice
+    environment:
+      POSTGRES_DB: webservicelibros
+      POSTGRES_USER: bluebul_web
+      POSTGRES_PASSWORD: bluebul123
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mongo-net
+
+  webservice:
+    build: ./biblioteca_blue/ws_LibrosBlue/ws_blue
+    container_name: webservice
+    ports:
+      - "8001:8001"
+    depends_on:
+      - postgres
+    networks:
+      - mongo-net
+
 networks:
   mongo-net:
     driver: bridge
@@ -44,3 +69,4 @@ volumes:
   biblioteca_blue_data:
   replica_biblioteca_blue_data:
   replica_biblioteca_blue2_data:
+  postgres_data:

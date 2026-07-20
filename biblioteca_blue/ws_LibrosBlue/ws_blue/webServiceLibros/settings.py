@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'webservicelibros',
         'USER': 'bluebul_web',
         'PASSWORD': 'bluebul123',
-        'HOST': 'localhost',
+        'HOST': 'postgres',   # ← cambia de 'localhost' a 'postgres'
         'PORT': '5432',
     }
 }
