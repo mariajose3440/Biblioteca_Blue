@@ -1,0 +1,7 @@
+asgiref==3.11.1
+Django==6.0.6
+djangorestframework==3.17.1
+mongoengine==0.29.1
+pymongo==4.10.1
+requests==2.34.2
+sqlparse==0.5.5

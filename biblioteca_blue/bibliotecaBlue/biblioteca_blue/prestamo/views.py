@@ -10,7 +10,7 @@ def guardar(request):
     ejemplares = []
     libros_por_isbn = {}
     try:
-        response = requests.get("http://localhost:8001/ws/ejemplares/")
+        response = requests.get("http://webservice:8001/ws/ejemplares/")
         if response.status_code == 200:
             data = response.json()
             for e in data:
