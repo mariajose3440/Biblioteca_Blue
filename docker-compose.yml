@@ -88,6 +88,16 @@ services:
       - postgres
     networks:
       - mongo-net
+    
+  dashboardblue:
+    build: ./biblioteca_blue/dashboard_blue/dashboard_bibliotecaBlue
+    container_name: dashboardblue
+    ports:
+      - "8002:8002"
+    depends_on:
+      - biblioteca_blue
+    networks:
+      - mongo-net
 
 networks:
   mongo-net:
