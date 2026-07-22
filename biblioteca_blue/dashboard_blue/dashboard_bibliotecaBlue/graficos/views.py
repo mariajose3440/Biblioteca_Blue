@@ -1,4 +1,3 @@
-
 import json
 from collections import Counter
 from datetime import date, datetime
@@ -133,7 +132,7 @@ def index(request):
     )
  
  
-    top_libros = libro_counter.most_common(10)
+    top_libros = libro_counter.most_common()
  
     contexto['libros_labels'] = [
         t for t, _ in top_libros

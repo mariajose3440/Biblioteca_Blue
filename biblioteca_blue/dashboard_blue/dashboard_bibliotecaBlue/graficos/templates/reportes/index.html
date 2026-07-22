@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="es">
-
+ 
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Biblioteca Blue</title>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-
+ 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+ 
     <style>
         body {
             font-family: system-ui, sans-serif;
@@ -15,16 +15,16 @@
             padding: 2rem;
             color: #143642;
         }
-
+ 
         h1 {
             margin-bottom: .2rem;
         }
-
+ 
         .subtitulo {
             color: #555;
             margin-bottom: 2rem;
         }
-
+ 
         .error {
             background: #ffe5e5;
             border: 1px solid #e57373;
@@ -32,404 +32,455 @@
             padding: 1rem;
             border-radius: 8px;
         }
-
+ 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
             gap: 1.5rem;
         }
-
+ 
         .card {
             background: white;
             border-radius: 12px;
             padding: 1.5rem;
             box-shadow: 0 1px 4px rgba(0,0,0,.08);
         }
-
+ 
         .card h2 {
             margin-top: 0;
             font-size: 1.1rem;
             color: #0F8B8D;
         }
-
+ 
         .stat {
             font-size: .9rem;
             color: #555;
         }
-
-        canvas {
-            max-height: 320px;
+ 
+        .chart-wrap {
+            position: relative;
+            width: 100%;
         }
-
+ 
         .estado {
             margin-top: 10px;
             font-weight: bold;
         }
-
+ 
     </style>
-
+ 
 </head>
-
-
+ 
+ 
 <body>
-
-
+ 
+ 
 <h1>📊 Dashboard - Biblioteca Blue</h1>
-
+ 
 <p class="subtitulo">
     Informes de préstamos y catálogo consumiendo WebApplication y WebService.
 </p>
-
-
+ 
+ 
 {% if error %}
-
+ 
 <div class="error">
-
+ 
     ⚠️ Error de conexión:
-
+ 
     <br><br>
-
+ 
     {{ error }}
-
+ 
 </div>
-
-
+ 
+ 
 {% else %}
-
-
+ 
+ 
 <div class="grid">
-
-
+ 
+ 
     <div class="card">
-
+ 
         <h2>
             📚 Estado de préstamos
         </h2>
-
-        <canvas id="chartEstado"></canvas>
-
+ 
+        <div class="chart-wrap" style="height:300px">
+            <canvas id="chartEstado"></canvas>
+        </div>
+ 
     </div>
-
-
-
+ 
+ 
+ 
     <div class="card">
-
+ 
         <h2>
             🔥 Libros más prestados
         </h2>
-
-        <canvas id="chartLibros"></canvas>
-
+ 
+        <div class="chart-wrap" id="wrapLibros">
+            <canvas id="chartLibros"></canvas>
+        </div>
+ 
     </div>
-
-
-
+ 
+ 
+ 
     <div class="card">
-
+ 
         <h2>
             🏷 Géneros más solicitados
         </h2>
-
-        <canvas id="chartGeneros"></canvas>
-
+ 
+        <div class="chart-wrap" id="wrapGeneros">
+            <canvas id="chartGeneros"></canvas>
+        </div>
+ 
     </div>
-
-
-
-
+ 
+ 
+ 
+ 
     <div class="card">
-
-
+ 
+ 
         <h2>
             📈 Tendencia de préstamos
         </h2>
-
-
-        <canvas id="chartRegresion"></canvas>
-
-
-
+ 
+ 
+        <div class="chart-wrap" style="height:300px">
+            <canvas id="chartRegresion"></canvas>
+        </div>
+ 
+ 
+ 
         {% if regresion %}
-
+ 
         <p class="stat">
-
+ 
             Modelo:
-
+ 
             <br>
-
+ 
             préstamos =
             {{ regresion.pendiente }}
             × mes +
-
+ 
             {{ regresion.intercepto }}
-
-
+ 
+ 
             <br><br>
-
-
+ 
+ 
             {% if regresion.pendiente > 0 %}
-
+ 
             📈 La demanda está creciendo.
-
+ 
             {% else %}
-
+ 
             📉 La demanda está disminuyendo.
-
+ 
             {% endif %}
-
-
+ 
+ 
             <br>
-
+ 
             Proyección realizada para los próximos 3 meses.
-
-
+ 
+ 
         </p>
-
-
+ 
+ 
         {% else %}
-
-
+ 
+ 
         <p class="stat">
-
+ 
             No hay suficientes datos para calcular tendencia.
-
+ 
         </p>
-
-
+ 
+ 
         {% endif %}
-
-
-
+ 
+ 
+ 
     </div>
-
-
+ 
+ 
 </div>
-
-
-
+ 
+ 
+ 
 {% endif %}
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 <script>
-
-
+ 
+ 
 const estadoLabels =
     {{ estado_labels_json|safe }};
-
-
+ 
+ 
 const estadoData =
     {{ estado_data_json|safe }};
-
-
-
+ 
+ 
+ 
 const librosLabels =
     {{ libros_labels_json|safe }};
-
-
+ 
+ 
 const librosData =
     {{ libros_data_json|safe }};
-
-
-
+ 
+ 
+ 
 const generosLabels =
     {{ generos_labels_json|safe }};
-
-
+ 
+ 
 const generosData =
     {{ generos_data_json|safe }};
-
-
-
+ 
+ 
+ 
 const regresion =
     {{ regresion_json|safe }};
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 // Estado préstamos
-
+ 
 if(estadoLabels.length > 0){
-
+ 
 new Chart(
     document.getElementById(
         'chartEstado'
     ),
     {
-
+ 
     type:'pie',
-
+ 
     data:{
-
+ 
         labels:estadoLabels,
-
+ 
         datasets:[{
-
+ 
             data:estadoData
-
+ 
         }]
-
+ 
+    },
+ 
+    options:{
+        maintainAspectRatio:false,
+        plugins:{
+            legend:{
+                labels:{ font:{ size:13 } }
+            }
+        }
     }
-
+ 
 });
-
+ 
 }
-
-
-
-
+ 
+ 
+ 
+ 
 // Libros
-
+ 
 if(librosLabels.length > 0){
-
+ 
+document.getElementById('wrapLibros').style.height =
+    Math.max(300, librosLabels.length * 36 + 40) + 'px';
+ 
 new Chart(
 document.getElementById(
     'chartLibros'
 ),
 {
-
+ 
 type:'bar',
-
+ 
 data:{
-
+ 
 labels:librosLabels,
-
+ 
 datasets:[{
-
+ 
 label:'Préstamos',
-
+ 
 data:librosData
-
+ 
 }]
-
+ 
 },
-
+ 
 options:{
-
-indexAxis:'y'
-
+ 
+indexAxis:'y',
+maintainAspectRatio:false,
+plugins:{
+    legend:{ labels:{ font:{ size:13 } } }
+},
+scales:{
+    x:{ ticks:{ font:{ size:12 } } },
+    y:{ ticks:{ font:{ size:13 }, autoSkip:false } }
 }
-
+ 
+}
+ 
 });
-
-
+ 
+ 
 }
-
-
-
-
+ 
+ 
+ 
+ 
 // Géneros
-
+ 
 if(generosLabels.length > 0){
-
+ 
+document.getElementById('wrapGeneros').style.height =
+    Math.max(300, generosLabels.length * 36 + 40) + 'px';
+ 
 new Chart(
 document.getElementById(
 'chartGeneros'
 ),
 {
-
+ 
 type:'bar',
-
+ 
 data:{
-
+ 
 labels:generosLabels,
-
+ 
 datasets:[{
-
+ 
 label:'Préstamos',
-
+ 
 data:generosData
-
+ 
 }]
-
+ 
 },
-
+ 
 options:{
-
-indexAxis:'y'
-
+ 
+indexAxis:'y',
+maintainAspectRatio:false,
+plugins:{
+    legend:{ labels:{ font:{ size:13 } } }
+},
+scales:{
+    x:{ ticks:{ font:{ size:12 } } },
+    y:{ ticks:{ font:{ size:13 }, autoSkip:false } }
 }
-
+ 
+}
+ 
 });
-
-
+ 
+ 
 }
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 // Regresión
-
+ 
 if(
     regresion &&
     regresion.meses
 ){
-
+ 
 new Chart(
-
+ 
 document.getElementById(
 'chartRegresion'
 ),
-
+ 
 {
-
+ 
 type:'line',
-
+ 
 data:{
-
-
+ 
+ 
 labels:regresion.meses,
-
-
+ 
+ 
 datasets:[
-
-
+ 
+ 
 {
-
+ 
 label:'Préstamos reales',
-
+ 
 data:regresion.reales
-
+ 
 },
-
-
-
+ 
+ 
+ 
 {
-
+ 
 label:'Regresión lineal',
-
+ 
 data:regresion.proyectados,
-
+ 
 borderDash:[
 6,4
 ],
-
+ 
 fill:false
-
+ 
 }
-
-
+ 
+ 
 ]
-
-
+ 
+ 
+},
+ 
+options:{
+    maintainAspectRatio:false,
+    plugins:{
+        legend:{ labels:{ font:{ size:13 } } }
+    },
+    scales:{
+        x:{ ticks:{ font:{ size:12 } } },
+        y:{ ticks:{ font:{ size:12 } } }
+    }
 }
-
+ 
 }
-
+ 
 );
-
-
+ 
+ 
 }
-
-
-
+ 
+ 
+ 
 </script>
-
-
+ 
+ 
 </body>
-
+ 
 </html>
